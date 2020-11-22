@@ -35,8 +35,7 @@ https://designshift.ca/apps/atem-tally
     ```
     const config = {
 	    "programGpio": 17,
-	    "previewGpio": 27,
-	    "camera": 1
+	    "previewGpio": 27
     }
     ```
 
