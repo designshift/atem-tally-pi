@@ -104,6 +104,7 @@ sessionio.on('connection', (socket) => {
             if (msg.devId == getDevId() || msg.devId == '*') {
                 if (msg.camera) {
                     config.camera = msg.camera;
+                    updateTally();
                 }
 
                 if (msg.identify) {
