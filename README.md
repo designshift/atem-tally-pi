@@ -30,7 +30,7 @@ https://designshift.ca/apps/atem-tally
     nano config.js
     ```
 
-    Inside you'll see 3 values that you can edit. By default it uses GPIO 17 for program tally, GPIO 27 for preview tally, and it also listens as camera 1. Edit these values according to your hardware set up.
+    Inside you'll see 2 values that you can edit. By default it uses GPIO 17 for program tally, and GPIO 27 for preview tally. Edit these values according to your hardware set up.
 
     ```
     const config = {
