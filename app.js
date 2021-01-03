@@ -28,7 +28,11 @@ if (localStorage.getItem('devId')) {
 }
 
 if (localStorage.getItem('camera')) {
-    config.camera = localStorage.getItem('camera');
+    config.camera = parseInt(localStorage.getItem('camera'));
+    if (isNaN(config.camera)) {
+        config.camera = 1;
+        localStorage.setItem('camera', 1);
+    }
 } else {
     config.camera = 1;
     localStorage.setItem('camera', 1);
@@ -99,17 +103,25 @@ const getPiModel = function() {
 
 server.listen(3778);
 
-bonjour.publish({
-    name: "ATEM Tally Pi Listener",
-    type: "dsft-tally-pi",
-    port: 3778,
-    txt: {
-        id: getDevId(),
-        version: pjson.version,
-        hardware: getPiModel(),
-        camera: config.camera
-    }
-});
+const publishDevice = function() {
+    bonjour.publish({
+        name: "ATEM Tally Pi Listener",
+        type: "dsft-tally-pi",
+        port: 3778,
+        txt: {
+            id: getDevId(),
+            version: pjson.version,
+            hardware: getPiModel(),
+            camera: config.camera
+        }
+    });
+}
+
+const republishDevice = function() {
+    bonjour.unpublishAll(function(err) {
+        publishDevice();
+    })
+}
 
 //do something when app is closing
 process.on('exit', exitHandler.bind(null, { cleanup: true }));
@@ -155,6 +167,7 @@ sessionio.on('connection', (socket) => {
                     config.camera = msg.camera;
                     localStorage.setItem('camera', msg.camera);
                     updateTally();
+                    republishDevice();
                 }
 
                 if (msg.identify) {
