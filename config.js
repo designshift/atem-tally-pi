@@ -1,7 +1,6 @@
 const config = {
-	"programGpio": 17,
-	"previewGpio": 27,
-	"camera": 1
+    "programGpio": 17,
+    "previewGpio": 27
 }
 
 module.exports = config;

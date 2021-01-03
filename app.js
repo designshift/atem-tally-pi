@@ -27,6 +27,14 @@ if (localStorage.getItem('devId')) {
     console.log("Set device ID " + deviceId);
 }
 
+if (localStorage.getItem('camera')) {
+    config.camera = localStorage.getItem('camera');
+} else {
+    config.camera = 1;
+    localStorage.setItem('camera', 1);
+}
+
+
 const setDevId = function() {
     console.log("Generating new ID");
     var newid = uuidv4();
@@ -91,8 +99,6 @@ const getPiModel = function() {
 
 server.listen(3778);
 
-config.camera = 1;
-
 bonjour.publish({
     name: "ATEM Tally Pi Listener",
     type: "dsft-tally-pi",
@@ -100,7 +106,8 @@ bonjour.publish({
     txt: {
         id: getDevId(),
         version: pjson.version,
-        hardware: getPiModel()
+        hardware: getPiModel(),
+        camera: config.camera
     }
 });
 
@@ -146,6 +153,7 @@ sessionio.on('connection', (socket) => {
             if (msg.devId == getDevId() || msg.devId == '*') {
                 if (msg.camera) {
                     config.camera = msg.camera;
+                    localStorage.setItem('camera', msg.camera);
                     updateTally();
                 }
 
