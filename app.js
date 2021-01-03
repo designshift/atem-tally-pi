@@ -1,30 +1,44 @@
-const Gpio = require("onoff").Gpio;
-const server = require('http').createServer();
-const config = require("./config");
 const bonjour = require("bonjour")();
-const sessionio = require('socket.io')(server);
-const tallyio = require('socket.io-client');
+const config = require("./config");
+const fs = require('fs');
+const Gpio = require("onoff").Gpio;
 const os = require('os');
-const ifaces = os.networkInterfaces();
+const LocalStorage = require('node-localstorage').LocalStorage;
+const pjson = require('./package.json');
+const server = require('http').createServer();
+const tallyio = require('socket.io-client');
 const { v4: uuidv4 } = require('uuid');
+
+const ifaces = os.networkInterfaces();
+const sessionio = require('socket.io')(server);
 
 const programLed = new Gpio(config.programGpio, 'out');
 const previewLed = new Gpio(config.previewGpio, 'out');
+
+var localStorage = new LocalStorage('./tmp');
 
 var TallySocket;
 var lastState;
 var deviceId;
 
+
+if (localStorage.getItem('devId')) {
+    deviceId = localStorage.getItem('devId');
+    console.log("Set device ID " + deviceId);
+}
+
 const setDevId = function() {
     console.log("Generating new ID");
-    return uuidv4();
+    var newid = uuidv4();
+    localStorage.setItem('devId', newid);
+    return newid;
 }
 
 const getDevId = function() {
     if (!deviceId || deviceId === null) {
         deviceId = setDevId();
     }
-    console.log("Device ID" + deviceId);
+    console.log("Device ID " + deviceId);
     return deviceId;
 }
 
@@ -49,6 +63,32 @@ const exitHandler = function(options, exitCode) {
     if (options.exit) process.exit();
 }
 
+// Based on https://github.com/fourcube/detect-rpi
+const getPiModel = function() {
+    var cpuInfo;
+
+    try {
+        cpuInfo = fs.readFileSync('/proc/cpuinfo', { encoding: 'utf8' });
+    } catch (e) {
+        // if this fails, this is probably not a pi
+        return false;
+    }
+
+    var model = cpuInfo
+        .split('\n')
+        .map(line => line.replace(/\t/g, ''))
+        .filter(line => line.length > 0)
+        .map(line => line.split(':'))
+        .map(pair => pair.map(entry => entry.trim()))
+        .filter(pair => pair[0] === 'Hardware')
+
+    if (!model || model.length == 0) {
+        return false;
+    }
+
+    return model[0][1];
+}
+
 server.listen(3778);
 
 config.camera = 1;
@@ -58,7 +98,9 @@ bonjour.publish({
     type: "dsft-tally-pi",
     port: 3778,
     txt: {
-        id: getDevId()
+        id: getDevId(),
+        version: pjson.version,
+        hardware: getPiModel()
     }
 });
 
