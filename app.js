@@ -50,7 +50,6 @@ const getDevId = function() {
     if (!deviceId || deviceId === null) {
         deviceId = setDevId();
     }
-    console.log("Device ID " + deviceId);
     return deviceId;
 }
 
@@ -101,7 +100,7 @@ const getPiModel = function() {
     return model[0][1];
 }
 
-server.listen(3778);
+
 
 const publishDevice = function() {
     bonjour.publish({
@@ -122,6 +121,9 @@ const republishDevice = function() {
         publishDevice();
     })
 }
+
+server.listen(3778);
+publishDevice();
 
 //do something when app is closing
 process.on('exit', exitHandler.bind(null, { cleanup: true }));
