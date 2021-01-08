@@ -1,5 +1,6 @@
 const bonjour = require("bonjour")();
 const config = require("./config");
+const exec = require("child_process").exec;
 const fs = require('fs');
 const Gpio = require("onoff").Gpio;
 const os = require('os');
@@ -37,7 +38,6 @@ if (localStorage.getItem('camera')) {
     config.camera = 1;
     localStorage.setItem('camera', 1);
 }
-
 
 const setDevId = function() {
     console.log("Generating new ID");
@@ -121,6 +121,28 @@ const republishDevice = function() {
         publishDevice();
     })
 }
+
+// Generate and set a unique hostname if default hostname is being used
+if (os.hostname() == "atem-tally" || os.hostname() == "raspberrypi") {
+    var shortid = getDevId().substring(0, 8);
+    exec("sudo hostnamectl set-hostname atem-tally-" + shortid, (err, stdout, stderr) => {
+        if (err) {
+            console.error(`Error: ${err}`);
+            return;
+        }
+        console.log(`stdout: ${stdout}`);
+        console.error(`stderr: ${stderr}`);
+    });
+    exec("sudo reboot", (err, stdout, stderr) => {
+        if (err) {
+            console.error(`Error: ${err}`);
+            return;
+        }
+        console.log(`stdout: ${stdout}`);
+        console.error(`stderr: ${stderr}`);
+    });
+}
+
 
 server.listen(3778);
 publishDevice();
