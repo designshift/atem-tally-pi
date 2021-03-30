@@ -104,7 +104,7 @@ const getPiModel = function() {
 
 const publishDevice = function() {
     bonjour.publish({
-        name: "ATEM Tally Pi Listener",
+        name: os.hostname(),
         type: "dsft-tally-pi",
         port: 3778,
         txt: {
@@ -154,6 +154,9 @@ process.on('SIGUSR1', exitHandler.bind(null, { exit: true }));
 process.on('SIGUSR2', exitHandler.bind(null, { exit: true }));
 process.on('uncaughtException', exitHandler.bind(null, { exit: true }));
 
+programLed.write(1);
+previewLed.write(1);
+
 sessionio.on('connection', (socket) => {
 
     socket.on('pi_host_connect', function(msg) {
@@ -169,6 +172,8 @@ sessionio.on('connection', (socket) => {
 
         TallySocket.on('connect', function() {
             console.log("Connected to server ");
+            programLed.write(0);
+            previewLed.write(0);
         });
 
         TallySocket.on('update_tally', function(msg) {
@@ -222,8 +227,8 @@ sessionio.on('connection', (socket) => {
 
         TallySocket.on('disconnect', function() {
             console.log("Disconnected from server");
-            programLed.write(0);
-            previewLed.write(0);
+            programLed.write(1);
+            previewLed.write(1);
             TallySocket = null;
         });
     });
