@@ -1,25 +1,25 @@
 {
-  "name": "atem-tally-pi",
-  "version": "1.1.0",
-  "description": "ATEM Tally listener for Raspberry Pi",
-  "main": "app.js",
-  "homepage": "https://designshift.ca/",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node app.js"
-  },
-  "keywords": [
-    "atem"
-  ],
-  "author": "Scott Kuo",
-  "license": "MIT",
-  "dependencies": {
-    "bonjour": "^3.5.0",
-    "node-localstorage": "^2.1.6",
-    "node-machine-id": "^1.1.12",
-    "onoff": "^6.0.1",
-    "socket.io": "^2.3.0",
-    "socket.io-client": "^2.3.1",
-    "uuid": "^8.3.1"
-  }
+    "name": "atem-tally-pi",
+    "version": "1.1.1",
+    "description": "ATEM Tally listener for Raspberry Pi",
+    "main": "app.js",
+    "homepage": "https://designshift.ca/",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "start": "node app.js"
+    },
+    "keywords": [
+        "atem"
+    ],
+    "author": "Scott Kuo",
+    "license": "MIT",
+    "dependencies": {
+        "bonjour": "^3.5.0",
+        "node-localstorage": "^2.1.6",
+        "node-machine-id": "^1.1.12",
+        "onoff": "^6.0.1",
+        "socket.io": "^2.3.0",
+        "socket.io-client": "^2.3.1",
+        "uuid": "^8.3.1"
+    }
 }
